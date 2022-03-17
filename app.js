@@ -43,6 +43,7 @@ async function getWeatherData() {
     //Get the raw data and process JSON
     let weatherData = await fetch(url, {mode: 'cors'});
     let weatherDataJson = await weatherData.json();
+    console.log(weatherDataJson);
 
     //Store the required data in an object
     displayWeatherObject = {
@@ -53,6 +54,7 @@ async function getWeatherData() {
         city: weatherDataJson.name,
         country: weatherDataJson.sys.country,
         time: weatherDataJson.dt};
+    console.log(displayWeatherObject);
 
     //Clear the search bar
     searchInput.value = '';
@@ -100,6 +102,54 @@ async function getWeatherData() {
     //Wind speed
     windSpeed.innerHTML = `Wind speed ${displayWeatherObject.wind} m/s`
 
+    //Clear error message
+    displayError.innerHTML = '';
+
+    // Change background image
+    const docBody = document.querySelector('body');
+    function changeBackground() {
+        if (displayWeatherObject.weather[1] === 'Thunderstorm') {
+            docBody.style.backgroundImage = `url('images/thunderstorm.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Drizzle') {
+            docBody.style.backgroundImage = `url('images/drizzle.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Rain') {
+            docBody.style.backgroundImage = `url('images/rain.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Snow') {
+            docBody.style.backgroundImage = `url('images/snow.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Atmosphere') {
+            docBody.style.backgroundImage = `url('images/atmosphere.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Clear') {
+            docBody.style.backgroundImage = `url('images/clear.jpg')`;
+        }
+        else if (displayWeatherObject.weather[1] === 'Clouds') {
+            docBody.style.backgroundImage = `url('images/clouds.jpg')`;
+        }
+    }
+    changeBackground();
+
+    //GET BACKGROUND GIFS
+    // const docBody = document.querySelector('body');
+    // const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=lOvBxxU64fiAuk0MtXSBCUyb9RMd9Ofa&s=${displayWeatherObject.weather[1]}`, {mode: 'cors'});
+    // const gifData = await response.json();
+    // docBody.style.backgroundImage = `url('${gifData.data.images.original.url}')`;
+    // console.log(gifData.data.images.original.url);
+    
+    // const docBody = document.querySelector('body');
+    // async function getBackgroundGif() {
+    //     try {
+    //     const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=lOvBxxU64fiAuk0MtXSBCUyb9RMd9Ofa&s=${displayWeatherObject.weather[1]}`, {mode: 'cors'});
+    //     const gifData = await response.json();
+    //     docBody.backgroundImage = `url(${gifData.data.images.original.url})`;
+    //     } catch (error) {
+    //         docBody.backgroundImage = `#`
+    //     }
+    // }
+    // getBackgroundGif();
     //RETURN WEATHER DATA OBJECT
     return displayWeatherObject;
     }
