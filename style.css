@@ -49,12 +49,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-	background-image: url('images/drizzle.jpg');
+	background-image: url('background-clouds.jpg');
 	background-position: center;
 	background-repeat: no-repeat;
 	background-size: cover;
 }
 .content {
+	height: 40vh;
+	width: 40vw;
 	border: 1px solid black;
-	background-color: aliceblue;
+	background-color: rgba(0, 0, 0, 0.3);
 }

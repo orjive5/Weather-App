@@ -34,16 +34,16 @@ let displayWeatherObject = {};
 searchInput.addEventListener('input', () => {
     url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
 })
-searchButton.addEventListener('click', getWeatherData);
+//Click search button
+searchButton.addEventListener('click', getRequiredData);
 
-//ASYNC/AWAIT FUNCTION TO GET THE WEATHER DATA FROM SEARCHED LOCATION AND STORE THE REQUIRED INFO IN AN OBJECT
+//ASYNC FUNCTION TO GET THE WEATHER DATA FROM SEARCHED LOCATION AND STORE THE REQUIRED INFO IN AN OBJECT
 async function getWeatherData() {
     try {
 
     //Get the raw data and process JSON
     let weatherData = await fetch(url, {mode: 'cors'});
     let weatherDataJson = await weatherData.json();
-    console.log(weatherDataJson);
 
     //Store the required data in an object
     displayWeatherObject = {
@@ -53,27 +53,12 @@ async function getWeatherData() {
         wind: weatherDataJson.wind.speed,
         city: weatherDataJson.name,
         country: weatherDataJson.sys.country,
-        time: weatherDataJson.dt};
-    console.log(displayWeatherObject);
+        time: weatherDataJson.dt,
+        latitude: weatherDataJson.coord.lat,
+        longitude: weatherDataJson.coord.lon}
 
     //Clear the search bar
     searchInput.value = '';
-
-    //Add Local Time with Google Time Zone API
-    let googleAPIKey = 'AIzaSyAKYWlmUmj3lRs_DhyyJnhUrQpfm29tzvk';
-    let latitude = weatherDataJson.coord.lat;
-    let longitude = weatherDataJson.coord.lon;
-    let location = `${latitude}, ${longitude}`;
-    let getTimezone = await fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${location}&timestamp=1478880000&key=${googleAPIKey}`, {mode: 'cors'});
-    let timezoneJson = await getTimezone.json();
-    timeZoneId = timezoneJson.timeZoneId;
-    let timeDate;
-    function timeRunning(){
-        timeDate = new Date().toLocaleTimeString('en-US', {timeZone: timeZoneId, hour12: false});
-        localTime.innerHTML = `Local time ${timeDate}`;
-    }
-    timeRunning();
-    let timeRunningInterval = setInterval(timeRunning, 1000);
 
     //ADD WEATHER DATA TO THE DOM
 
@@ -105,57 +90,13 @@ async function getWeatherData() {
     //Clear error message
     displayError.innerHTML = '';
 
-    // Change background image
-    const docBody = document.querySelector('body');
-    function changeBackground() {
-        if (displayWeatherObject.weather[1] === 'Thunderstorm') {
-            docBody.style.backgroundImage = `url('images/thunderstorm.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Drizzle') {
-            docBody.style.backgroundImage = `url('images/drizzle.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Rain') {
-            docBody.style.backgroundImage = `url('images/rain.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Snow') {
-            docBody.style.backgroundImage = `url('images/snow.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Atmosphere') {
-            docBody.style.backgroundImage = `url('images/atmosphere.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Clear') {
-            docBody.style.backgroundImage = `url('images/clear.jpg')`;
-        }
-        else if (displayWeatherObject.weather[1] === 'Clouds') {
-            docBody.style.backgroundImage = `url('images/clouds.jpg')`;
-        }
-    }
-    changeBackground();
-
-    //GET BACKGROUND GIFS
-    // const docBody = document.querySelector('body');
-    // const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=lOvBxxU64fiAuk0MtXSBCUyb9RMd9Ofa&s=${displayWeatherObject.weather[1]}`, {mode: 'cors'});
-    // const gifData = await response.json();
-    // docBody.style.backgroundImage = `url('${gifData.data.images.original.url}')`;
-    // console.log(gifData.data.images.original.url);
-    
-    // const docBody = document.querySelector('body');
-    // async function getBackgroundGif() {
-    //     try {
-    //     const response = await fetch(`https://api.giphy.com/v1/gifs/translate?api_key=lOvBxxU64fiAuk0MtXSBCUyb9RMd9Ofa&s=${displayWeatherObject.weather[1]}`, {mode: 'cors'});
-    //     const gifData = await response.json();
-    //     docBody.backgroundImage = `url(${gifData.data.images.original.url})`;
-    //     } catch (error) {
-    //         docBody.backgroundImage = `#`
-    //     }
-    // }
-    // getBackgroundGif();
     //RETURN WEATHER DATA OBJECT
     return displayWeatherObject;
     }
 
     //DEAL WITH ERRORS
     catch(error) {
+
         //Clear previous weather data
         weatherDescription.innerHTML = '';
         cityName.innerHTML = '';
@@ -165,12 +106,69 @@ async function getWeatherData() {
         pressure.innerHTML = '';
         windSpeed.innerHTML = '';
         localTime.innerHTML = '';
-        //TODO
-        //FIND A BETTER WAY TO STOP TIME/CLEAR INTERVAL
-        timeZoneId = '';
+        displayWeatherObject = {};
 
         //Display error message
         displayError.innerHTML = 'City not found, please, try again!';
         console.log(error);
     }
 }
+    //FIND THE LOCAL TIME ZONE USING GOOGLE TIME ZONE API
+    let timeRunningInterval;
+    let timezoneJson;
+    async function getLocalTime() {
+        try {
+    let googleAPIKey = 'AIzaSyAKYWlmUmj3lRs_DhyyJnhUrQpfm29tzvk';
+    let location = `${displayWeatherObject.latitude}, ${displayWeatherObject.longitude}`;
+    let getTimezone = await fetch(`https://maps.googleapis.com/maps/api/timezone/json?location=${location}&timestamp=1478880000&key=${googleAPIKey}`, {mode: 'cors'});
+    timezoneJson = await getTimezone.json();
+    return timezoneJson;
+        }
+        catch(error) {
+            console.log(error)
+            console.log('Please, try again!')
+            localTime.innerHTML = '';
+        }
+    }
+
+    //DISPLAY LOCAL TIME
+    async function timeRunning(){
+        try {
+            timeZoneId = await timezoneJson.timeZoneId;
+            let timeDate;
+                if (timezoneJson.timeZoneId !== undefined){
+            timeDate = new Date().toLocaleTimeString('en-US', {timeZone: timeZoneId, hour12: false});
+            localTime.innerHTML = `Local time ${timeDate}`
+            }
+                else {
+            localTime.innerHTML = '';
+            }
+        }
+        catch(error){
+            console.log('timezoneJson.timeZoneId is undefined');
+        }
+    }
+    async function setTimeRunningInterval() {
+        try {
+            if (timezoneJson.timeZoneId !== undefined){
+        timeRunningInterval = setInterval(timeRunning, 1000);
+            }
+        }
+        catch(error) {
+            console.log(error)
+            clearInterval(timeRunningInterval);
+        }
+    }
+
+    //RUN ASYNC FUNCTIONS
+    async function getRequiredData() {
+        try {
+        await getWeatherData();
+        await getLocalTime();
+        await timeRunning();
+        await setTimeRunningInterval();
+        }
+        catch (error) {
+            console.log('No required data try again!')
+        }
+    }
