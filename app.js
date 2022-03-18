@@ -9,7 +9,7 @@ const errorDiv = document.querySelector('.error-div');
 
 //Select search elements
 const searchInput = document.querySelector('.search-city');
-const searchButton = document.querySelector('.search-button');
+const searchIcon = document.querySelector('.search-icon');
 
 //Select main weather info
 let cityName = document.querySelector('.city-name');
@@ -35,7 +35,7 @@ searchInput.addEventListener('input', () => {
     url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
 })
 //Click search button
-searchButton.addEventListener('click', getRequiredData);
+searchIcon.addEventListener('click', getRequiredData);
 
 //ASYNC FUNCTION TO GET THE WEATHER DATA FROM SEARCHED LOCATION AND STORE THE REQUIRED INFO IN AN OBJECT
 async function getWeatherData() {
@@ -73,10 +73,10 @@ async function getWeatherData() {
     cityName.innerHTML = `${displayWeatherObject.city}, ${displayWeatherObject.country}`;
 
     //Current temperature
-    currentTemperature.innerHTML = `Current temperature ${displayWeatherObject.main.temp} &#8451;`;
+    currentTemperature.innerHTML = `${displayWeatherObject.main.temp} &#8451;`;
 
     //Feels like
-    feelsLike.innerHTML = `Feels like ${displayWeatherObject.main.feels_like}&#8451;`;
+    feelsLike.innerHTML = `Feels like ${displayWeatherObject.main.feels_like} &#8451;`;
 
     //Humidity
     humidity.innerHTML = `Humidity ${displayWeatherObject.main.humidity} %`;
@@ -137,8 +137,8 @@ async function getWeatherData() {
             timeZoneId = await timezoneJson.timeZoneId;
             let timeDate;
                 if (timezoneJson.timeZoneId !== undefined){
-            timeDate = new Date().toLocaleTimeString('en-US', {timeZone: timeZoneId, hour12: false});
-            localTime.innerHTML = `Local time ${timeDate}`
+            timeDate = new Date().toLocaleTimeString('en-US', {timeZone: timeZoneId});
+            localTime.innerHTML = `${timeDate}`
             }
                 else {
             localTime.innerHTML = '';
@@ -172,3 +172,15 @@ async function getWeatherData() {
             console.log('No required data try again!')
         }
     }
+    //RUN ASYNC FUNCTIONS ONLOAD
+    window.addEventListener('load', () => {
+        searchInput.value = 'Belgrade'
+        url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
+        getRequiredData();
+    });
+    //RUN ASYNC FUNCTION WHEN ENTER IS PRESSED
+    searchInput.addEventListener('keyup', function(event) {
+        if (event.keyCode === 13) {
+            getRequiredData();
+        }
+    })
