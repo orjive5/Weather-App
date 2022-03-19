@@ -56,6 +56,8 @@ async function getWeatherData() {
         time: weatherDataJson.dt,
         latitude: weatherDataJson.coord.lat,
         longitude: weatherDataJson.coord.lon}
+        console.log(displayWeatherObject);
+        console.log(weatherDataJson);
 
     //Clear the search bar
     searchInput.value = '';
@@ -73,10 +75,64 @@ async function getWeatherData() {
     cityName.innerHTML = `${displayWeatherObject.city}, ${displayWeatherObject.country}`;
 
     //Current temperature
-    currentTemperature.innerHTML = `${displayWeatherObject.main.temp} &#8451;`;
+    currentTemperature.innerHTML = `${Math.round(displayWeatherObject.main.temp)} &#8451;`;
 
+    //Animated weather icon
+    const animatedWeatherIcon = document.querySelector('.all-weather-icon');
+    function displayWeatherIcon() {
+        if (displayWeatherObject.weather[1] === 'Thunderstorm'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/thunderstorms-rain.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/thunderstorms-night-rain.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Drizzle'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/drizzle.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/partly-cloudy-night-drizzle.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Rain'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/rain.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/partly-cloudy-night-rain.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Snow'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/snow.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/partly-cloudy-night-snow.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Atmosphere'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/mist.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/fog-night.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Clear'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/clear-day.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/clear-night.svg'
+            }
+        }
+        else if (displayWeatherObject.weather[1] === 'Clouds'){
+            if (weatherDataJson.dt < weatherDataJson.sys.sunset && weatherDataJson.dt > weatherDataJson.sys.sunrise){
+                animatedWeatherIcon.src = 'animated/overcast.svg'
+            } else {
+                animatedWeatherIcon.src = 'animated/overcast-night.svg'
+            }
+        }
+    }
+    displayWeatherIcon();
     //Feels like
-    feelsLike.innerHTML = `Feels like ${displayWeatherObject.main.feels_like} &#8451;`;
+    feelsLike.innerHTML = `Feels like ${Math.round(displayWeatherObject.main.feels_like)} &#8451;`;
 
     //Humidity
     humidity.innerHTML = `Humidity ${displayWeatherObject.main.humidity} %`;
@@ -96,17 +152,6 @@ async function getWeatherData() {
 
     //DEAL WITH ERRORS
     catch(error) {
-
-        //Clear previous weather data
-        weatherDescription.innerHTML = '';
-        cityName.innerHTML = '';
-        currentTemperature.innerHTML = '';
-        feelsLike.innerHTML = '';
-        humidity.innerHTML = '';
-        pressure.innerHTML = '';
-        windSpeed.innerHTML = '';
-        localTime.innerHTML = '';
-        displayWeatherObject = {};
 
         //Display error message
         displayError.innerHTML = 'City not found, please, try again!';
