@@ -32,7 +32,8 @@ let displayError = document.querySelector('.display-error');
 let url;
 let displayWeatherObject = {};
 searchInput.addEventListener('input', () => {
-    url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
+    url = `https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
+    // url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
 })
 //Click search button
 searchIcon.addEventListener('click', getRequiredData);
@@ -220,9 +221,10 @@ async function getWeatherData() {
     //RUN ASYNC FUNCTIONS ONLOAD
     window.addEventListener('load', () => {
         searchInput.value = 'Belgrade'
-        url = `http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
+        url = `https://crossorigin.me/http://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`
         getRequiredData();
     });
+    
     //RUN ASYNC FUNCTION WHEN ENTER IS PRESSED
     searchInput.addEventListener('keyup', function(event) {
         if (event.keyCode === 13) {
