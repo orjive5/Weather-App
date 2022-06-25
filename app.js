@@ -1,19 +1,11 @@
 //SELECT ELEMENTS
 
-//Select separate content divs
-// const weatherInfo = document.querySelector('.weather-info');
-// const searchDiv = document.querySelector('.search-div');
-// const mainWeatherInfo = document.querySelector('.main-weather-info');
-// const otherWeatherInfo = document.querySelector('.other-weather-info');
-// const errorDiv = document.querySelector('.error-div');
-
 //Select search elements
 const searchInput = document.querySelector('.search-city');
 const searchIcon = document.querySelector('.search-icon');
 
 //Select main weather info
 const cityName = document.querySelector('.city-name');
-// const localTime = document.querySelector('.local-time');
 const weatherDescription = document.querySelector('.weather-description');
 const currentTemperature = document.querySelector('.current-temperature');
 
@@ -34,6 +26,7 @@ let displayWeatherObject = {};
 searchInput.addEventListener('input', () => {
     url = `https://api.openweathermap.org/data/2.5/weather?q=${searchInput.value}&units=metric&APPID=7bede0872db1abee3b064a02835ffb0b`;
 });
+
 //Click search button
 searchIcon.addEventListener('click', getRequiredData);
 
@@ -61,8 +54,6 @@ async function getWeatherData() {
             latitude: weatherDataJson.coord.lat,
             longitude: weatherDataJson.coord.lon,
         };
-        // console.log(displayWeatherObject);
-        // console.log(weatherDataJson);
 
         //Clear the search bar
         searchInput.value = '';
@@ -183,64 +174,13 @@ async function getWeatherData() {
         //DEAL WITH ERRORS
         //Display error message
         displayError.innerHTML = 'City not found, please, try again!';
-        // console.log(error);
     }
 }
-// //FIND THE LOCAL TIME ZONE USING GOOGLE TIME ZONE API
-// let timeRunningInterval;
-// let timezoneJson;
-// async function getLocalTime() {
-//     try {
-//         let googleAPIKey = 'AIzaSyAKYWlmUmj3lRs_DhyyJnhUrQpfm29tzvk';
-//         let location = `${displayWeatherObject.latitude}, ${displayWeatherObject.longitude}`;
-//         let getTimezone = await fetch(
-//             `https://maps.googleapis.com/maps/api/timezone/json?location=${location}&timestamp=1478880000&key=${googleAPIKey}`,
-//             { mode: 'cors' }
-//         );
-//         timezoneJson = await getTimezone.json();
-//         return timezoneJson;
-//     } catch (error) {
-//         console.log(error);
-//         console.log('Please, try again!');
-//         localTime.innerHTML = '';
-//     }
-// }
-
-// //DISPLAY LOCAL TIME
-// async function timeRunning() {
-//     try {
-//         timeZoneId = await timezoneJson.timeZoneId;
-//         let timeDate;
-//         if (timezoneJson.timeZoneId !== undefined) {
-//             timeDate = new Date().toLocaleTimeString('en-US', {
-//                 timeZone: timeZoneId,
-//             });
-//             localTime.innerHTML = `${timeDate}`;
-//         } else {
-//             localTime.innerHTML = '';
-//         }
-//     } catch (error) {
-//         console.log('timezoneJson.timeZoneId is undefined');
-//     }
-// }
-// async function setTimeRunningInterval() {
-//     try {
-//         if (timezoneJson.timeZoneId !== undefined) {
-//             timeRunningInterval = setInterval(timeRunning, 1000);
-//         }
-//     } catch (error) {
-//         console.log(error);
-//         clearInterval(timeRunningInterval);
-//     }
-// }
 
 //RUN ASYNC FUNCTIONS
 async function getRequiredData() {
     try {
         await getWeatherData();
-        // await getLocalTime();
-        // await timeRunning();
-        // await setTimeRunningInterval();
     } catch (error) {
         console.log('No required data try again!');
     }
